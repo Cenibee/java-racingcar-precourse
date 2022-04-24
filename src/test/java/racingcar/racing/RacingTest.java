@@ -6,8 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,5 +97,27 @@ public class RacingTest {
 
         racing.play();
         assertThat(racing.isRacingEnd()).isTrue();
+    }
+
+    @Test
+    void 단독_선두_가져오기_테스트() {
+        when(racing.racingLines.get(0).getPosition()).thenReturn(1);
+        when(racing.racingLines.get(1).getPosition()).thenReturn(0);
+
+        Set<Car> firstCars = racing.getFirstCars();
+
+        assertThat(firstCars)
+                .contains(racing.racingLines.get(0).getRacingCar());
+    }
+
+    @Test
+    void 선두_가져오기_테스트() {
+        when(racing.racingLines.get(0).getPosition()).thenReturn(1);
+        when(racing.racingLines.get(1).getPosition()).thenReturn(1);
+
+        Set<Car> firstCars = racing.getFirstCars();
+
+        assertThat(firstCars)
+                .contains(racing.racingLines.get(0).getRacingCar(), racing.racingLines.get(1).getRacingCar());
     }
 }

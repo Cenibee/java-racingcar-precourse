@@ -1,7 +1,11 @@
 package racingcar.racing;
 
+import static java.lang.Math.max;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import racingcar.car.Car;
 
 public class Racing {
@@ -71,4 +75,26 @@ public class Racing {
             throw new IllegalArgumentException("레이싱은 1 회 이상 진행해야합니다");
         }
     }
+
+    public Set<Car> getFirstCars() {
+        int firstPosition = 0;
+        Set<Car> firstCars = new HashSet<>();
+        for (RacingLine racingLine : racingLines) {
+            firstPosition = max(racingLine.getPosition(), firstPosition);
+            aggregateFirstCars(firstPosition, firstCars, racingLine);
+        }
+        return firstCars;
+    }
+
+    private void aggregateFirstCars(int firstPosition, Set<Car> firstCars, RacingLine racingLine) {
+        int position = racingLine.getPosition();
+
+        if (position < firstPosition) {
+            return;
+        } else if (position > firstPosition) {
+            firstCars.clear();
+        }
+        firstCars.add(racingLine.getRacingCar());
+    }
+
 }
