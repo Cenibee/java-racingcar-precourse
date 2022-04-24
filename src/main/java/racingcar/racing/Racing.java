@@ -9,10 +9,14 @@ public class Racing {
     final int maxRacingRound;
     private int currentRacingRound;
 
-    public Racing(List<Car> cars, int maxRacingRound) {
+    public static Racing fromCars(List<Car> cars, int maxRacingRound) {
+        return new Racing(toRacingLines(cars), maxRacingRound);
+    }
+
+    Racing(List<RacingLine> racingLines, int maxRacingRound) {
         assertMaxRacingRound(maxRacingRound);
         this.maxRacingRound = maxRacingRound;
-        this.racingLines = toRacingLines(cars);
+        this.racingLines = racingLines;
         this.currentRacingRound = 0;
     }
 
@@ -42,7 +46,7 @@ public class Racing {
         return currentRacingRound >= maxRacingRound;
     }
 
-    private List<RacingLine> toRacingLines(List<Car> cars) {
+    static private List<RacingLine> toRacingLines(List<Car> cars) {
         assertRacingCars(cars);
 
         List<RacingLine> toRacingLines = new ArrayList<>(cars.size());
@@ -54,7 +58,7 @@ public class Racing {
         return toRacingLines;
     }
 
-    private void assertRacingCars(List<Car> cars) {
+    static private void assertRacingCars(List<Car> cars) {
         if (cars == null) {
             throw new IllegalArgumentException("레이싱을 생성하기 위한 자동차 리스트가 null 입니다");
         } else if (cars.isEmpty()) {
