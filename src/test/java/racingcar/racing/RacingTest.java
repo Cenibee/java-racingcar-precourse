@@ -4,9 +4,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -56,4 +57,47 @@ public class RacingTest {
         );
     }
 
+    @Test
+    void 레이싱을_진행하면_모든_레이싱라인이_goStraight_한다() {
+        Racing racing = new Racing(cars, 10);
+        mockRacingLines(racing);
+
+        racing.play();
+
+        for (RacingLine racingLine : racing.racingLines) {
+            verify(racingLine).goStraight();
+        }
+    }
+
+    @Test
+    void 레이싱이_이미_종료된_경우_play_예외가_발생하고_이후_goStraight_하지않는다() {
+        Racing racing = new Racing(cars, 1);
+        racing.play();
+
+        mockRacingLines(racing);
+        assertThatThrownBy(racing::play)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 종료된 레이싱입니다");
+        for (RacingLine racingLine : racing.racingLines) {
+            verify(racingLine, never()).goStraight();
+        }
+    }
+
+    @Test
+    void 레이싱_최대_횟수만큼_play_하면_isGameEnd_true() {
+        Racing racing = new Racing(cars, 1);
+
+        assertThat(racing.isRacingEnd()).isFalse();
+
+        racing.play();
+        assertThat(racing.isRacingEnd()).isTrue();
+    }
+
+
+    private void mockRacingLines(Racing racing) {
+        racing.racingLines.clear();
+        for (int i = 0; i < 3; i++) {
+            racing.racingLines.add(mock(RacingLine.class));
+        }
+    }
 }

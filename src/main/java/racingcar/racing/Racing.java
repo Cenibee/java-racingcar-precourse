@@ -7,11 +7,13 @@ import racingcar.car.Car;
 public class Racing {
     final List<RacingLine> racingLines;
     final int maxRacingRound;
+    private int currentRacingRound;
 
     public Racing(List<Car> cars, int maxRacingRound) {
         assertMaxRacingRound(maxRacingRound);
         this.maxRacingRound = maxRacingRound;
         this.racingLines = toRacingLines(cars);
+        this.currentRacingRound = 0;
     }
 
     public List<RacingLine> getRacingLines() {
@@ -20,6 +22,24 @@ public class Racing {
 
     public int getMaxRacingRound() {
         return this.maxRacingRound;
+    }
+
+    public void play() {
+        increaseRacingRound();
+        for (RacingLine racingLine : racingLines) {
+            racingLine.goStraight();
+        }
+    }
+
+    private void increaseRacingRound() {
+        if (isRacingEnd()) {
+            throw new IllegalStateException("이미 종료된 레이싱입니다");
+        }
+        currentRacingRound++;
+    }
+
+    public boolean isRacingEnd() {
+        return currentRacingRound >= maxRacingRound;
     }
 
     private List<RacingLine> toRacingLines(List<Car> cars) {
